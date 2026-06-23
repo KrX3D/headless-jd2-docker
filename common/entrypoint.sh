@@ -1,8 +1,8 @@
 #!/bin/sh
 
 # Set defaults for uid and gid to not be root
-if [ -z $GID ]; then GID=100;  fi
-if [ -z $UID ]; then UID=1000; fi
+GID="${GID:-100}"
+UID="${UID:-1000}"
 
 if [ "$GID" -ne "0" ]; then
 	GROUP=jdownloader
@@ -37,6 +37,7 @@ chown -R $UID:$GID /opt/JDownloader
 # Sometimes this gets deleted. Just copy it every time.
 cp /opt/JDownloader/sevenzip* /opt/JDownloader/libs/
 
+umask "${UMASK:-000}"
 su-exec ${UID}:${GID} "$@"
 
 # Keep container alive when jd2 restarts
