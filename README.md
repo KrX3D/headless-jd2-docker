@@ -41,4 +41,6 @@ PASSWORD             | The MyJDownloader account password. Is written automatica
 UID                  | Specifies the UID the daemon should run as. All created files will be owned by this UID. Defaults to 1000.
 GID                  | Specifies the GID for all created files. This only works in combination with the UID. Defaults to 100 for users.
 
+UMASK                | Sets the umask applied before JDownloader starts. Defaults to `000` (→ 777 dirs / 666 files), making downloaded files writable from Windows over SMB. Set to e.g. `022` for standard Unix permissions.
+
 Not setting `UID` / `GID` will default to `1000`:`100`.
