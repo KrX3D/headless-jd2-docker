@@ -31,8 +31,5 @@ RUN chmod +x /opt/JDownloader/entrypoint.sh
 VOLUME /opt/JDownloader/cfg
 VOLUME /opt/JDownloader/Downloads
 
-VOLUME /opt/JDownloader/cfg
-VOLUME /opt/JDownloader/Downloads
-
 ENTRYPOINT ["tini", "-g", "--", "/opt/JDownloader/entrypoint.sh"]
 CMD ["java", "-Djava.awt.headless=true", "-jar", "/opt/JDownloader/JDownloader.jar"]
