@@ -17,6 +17,9 @@ COPY common/* /opt/JDownloader/
 RUN chmod +x /opt/JDownloader/entrypoint.sh
 
 
+VOLUME /opt/JDownloader/cfg
+VOLUME /opt/JDownloader/Downloads
+
 ENTRYPOINT ["tini", "-g", "--", "/opt/JDownloader/entrypoint.sh"]
 # Run this when the container is started
 CMD ["java", "-Djava.awt.headless=true", "-jar", "/opt/JDownloader/JDownloader.jar"]
