@@ -1,11 +1,7 @@
-[![Build Status](https://travis-ci.com/PlusMinus0/headless-jd2-docker.svg?branch=master)](https://travis-ci.com/PlusMinus0/headless-jd2-docker)
+[![Build and Test](https://github.com/KrX3D/headless-jd2-docker/actions/workflows/build.yml/badge.svg)](https://github.com/KrX3D/headless-jd2-docker/actions/workflows/build.yml)
 # Supported tags
- * [`latest`, `debian`, `v3.0-debian` (debian.Dockerfile)](https://github.com/PlusMinus0/headless-jd2-docker/blob/master/debian.Dockerfile)
- * [`alpine`, `v3.0-alpine` (alpine.Dockerfile)](https://github.com/PlusMinus0/headless-jd2-docker/blob/master/alpine.Dockerfile)
- * [`dev-debian` (debian.Dockerfile)](https://github.com/PlusMinus0/headless-jd2-docker/blob/dev/debian.Dockerfile)
- * [`dev-alpine` (alpine.Dockerfile)](https://github.com/PlusMinus0/headless-jd2-docker/blob/dev/alpine.Dockerfile)
- * [`v2.1` (Dockerfile)](https://github.com/PlusMinus0/headless-jd2-docker/blob/v2.1/Dockerfile)
- * [`v2.0` (Dockerfile)](https://github.com/PlusMinus0/headless-jd2-docker/blob/v2.0/Dockerfile)
+ * [`latest`, `debian` (debian.Dockerfile)](https://github.com/KrX3D/headless-jd2-docker/blob/master/debian.Dockerfile)
+ * [`alpine` (alpine.Dockerfile)](https://github.com/KrX3D/headless-jd2-docker/blob/master/alpine.Dockerfile)
 
 
 # Running the container
