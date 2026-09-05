@@ -9,6 +9,12 @@ if [ "$(docker version --format '{{.Server.Experimental}}')" = 'true' ]; then
     export DOCKER_BUILDKIT=1
 fi
 
+# entrypoint.sh does real work as root (user/group creation, chown, writing
+# the credentials file) before the app starts; dgoss's default 0.2s
+# post-start sleep can be too short for that plus container startup
+# overhead, causing spurious failures.
+export GOSS_SLEEP="${GOSS_SLEEP:-2}"
+
 
 for image in "${images[@]}"; do
     tag="jd2dev:${image}"

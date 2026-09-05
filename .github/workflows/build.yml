@@ -37,31 +37,6 @@ jobs:
           tags: jd2:alpine
           load: true
 
-      - name: DEBUG image state
-        run: |
-          for image in debian alpine; do
-            name="dbg-$image"
-            docker rm -f "$name" >/dev/null 2>&1 || true
-
-            echo "=== $image: os-release (no entrypoint, safe) ==="
-            docker run --rm --entrypoint sh "jd2:$image" -c 'cat /etc/os-release' || true
-
-            echo "=== $image: tool presence (no entrypoint, safe) ==="
-            docker run --rm --entrypoint sh "jd2:$image" -c 'command -v useradd; command -v groupadd; command -v getent; command -v id' || true
-
-            echo "=== $image: starting real container to inspect post-entrypoint state ==="
-            docker run -d --name "$name" "jd2:$image"
-            sleep 3
-            echo "=== $image: container logs (entrypoint stdout/stderr) ==="
-            docker logs "$name" || true
-            echo "=== $image: passwd after entrypoint ran ==="
-            docker exec "$name" getent passwd || true
-            echo "=== $image: group 100/101 after entrypoint ran ==="
-            docker exec "$name" sh -c 'getent group 100; getent group 101' || true
-
-            docker rm -f "$name" >/dev/null 2>&1 || true
-          done
-
       - name: Install goss/dgoss
         env:
           GOSS_VER: v0.4.10
@@ -71,6 +46,14 @@ jobs:
           chmod +rx /usr/local/bin/dgoss
 
       - name: Test images with goss
+        env:
+          # entrypoint.sh does real work as root (user/group creation, chown,
+          # writing the credentials file) before the app starts; dgoss's
+          # default 0.2s post-start sleep is too short for that plus normal
+          # container startup overhead on a shared runner, causing spurious
+          # "user does not exist yet" failures. Confirmed by re-checking the
+          # same container 3s after start, where the user was present.
+          GOSS_SLEEP: "2"
         run: |
           set -e
           for image in debian alpine; do
