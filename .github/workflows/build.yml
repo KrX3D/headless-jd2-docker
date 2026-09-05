@@ -40,16 +40,26 @@ jobs:
       - name: DEBUG image state
         run: |
           for image in debian alpine; do
-            echo "=== $image: os-release ==="
-            docker run --rm jd2:$image cat /etc/os-release || true
-            echo "=== $image: passwd ==="
-            docker run --rm jd2:$image getent passwd || true
-            echo "=== $image: group (gid 100/101) ==="
-            docker run --rm jd2:$image sh -c 'getent group 100; getent group 101' || true
-            echo "=== $image: useradd presence ==="
-            docker run --rm jd2:$image sh -c 'command -v useradd; command -v groupadd; command -v getent; command -v id' || true
-            echo "=== $image: entrypoint dry run output ==="
-            timeout 10 docker run --rm --entrypoint sh jd2:$image -c 'sh -x /opt/JDownloader/entrypoint.sh true 2>&1 | head -n 60' || true
+            name="dbg-$image"
+            docker rm -f "$name" >/dev/null 2>&1 || true
+
+            echo "=== $image: os-release (no entrypoint, safe) ==="
+            docker run --rm --entrypoint sh "jd2:$image" -c 'cat /etc/os-release' || true
+
+            echo "=== $image: tool presence (no entrypoint, safe) ==="
+            docker run --rm --entrypoint sh "jd2:$image" -c 'command -v useradd; command -v groupadd; command -v getent; command -v id' || true
+
+            echo "=== $image: starting real container to inspect post-entrypoint state ==="
+            docker run -d --name "$name" "jd2:$image"
+            sleep 3
+            echo "=== $image: container logs (entrypoint stdout/stderr) ==="
+            docker logs "$name" || true
+            echo "=== $image: passwd after entrypoint ran ==="
+            docker exec "$name" getent passwd || true
+            echo "=== $image: group 100/101 after entrypoint ran ==="
+            docker exec "$name" sh -c 'getent group 100; getent group 101' || true
+
+            docker rm -f "$name" >/dev/null 2>&1 || true
           done
 
       - name: Install goss/dgoss
