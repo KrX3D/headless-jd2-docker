@@ -37,6 +37,38 @@ jobs:
           tags: jd2:alpine
           load: true
 
+      - name: Install goss/dgoss
+        env:
+          GOSS_VER: v0.4.10
+        run: |
+          curl -fsSL https://goss.rocks/install | sh
+          curl -fsSL "https://github.com/goss-org/goss/releases/download/${GOSS_VER}/dgoss" -o /usr/local/bin/dgoss
+          chmod +rx /usr/local/bin/dgoss
+
+      - name: Test images with goss
+        env:
+          # entrypoint.sh does real work as root (user/group creation, chown,
+          # writing the credentials file) before the app starts; dgoss's
+          # default 0.2s post-start sleep is too short for that plus normal
+          # container startup overhead on a shared runner, causing spurious
+          # "user does not exist yet" failures. Confirmed by re-checking the
+          # same container 3s after start, where the user was present.
+          GOSS_SLEEP: "2"
+        run: |
+          set -e
+          for image in debian alpine; do
+            tag="jd2:${image}"
+
+            echo "Testing $tag (default)"
+            GOSS_FILES_PATH=./tests/default dgoss run "$tag"
+
+            echo "Testing $tag with UID and GID"
+            GOSS_FILES_PATH=./tests/uid-test dgoss run -e UID=1001 -e GID=101 "$tag"
+
+            echo "Testing $tag with EMAIL and PASSWORD"
+            GOSS_FILES_PATH=./tests/credentials-test dgoss run -e EMAIL=mymail@example.com -e PASSWORD=mypassword "$tag"
+          done
+
   push:
     needs: build
     runs-on: ubuntu-latest

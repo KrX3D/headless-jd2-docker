@@ -39,5 +39,5 @@ user:
     gid: 100
     groups:
     - users
-    home: []
+    home: /home/jdownloader
     shell: /bin/false

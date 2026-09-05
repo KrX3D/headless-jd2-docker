@@ -8,7 +8,8 @@ RUN apk update && apk upgrade && \
         --user-agent="https://github.com/KrX3D/headless-jd2-docker" \
         http://installer.jdownloader.org/JDownloader.jar && \
     java -Djava.awt.headless=true -jar /opt/JDownloader/JDownloader.jar && \
-    mkdir -p /tmp/ && chmod 1777 /tmp
+    mkdir -p /tmp/ && chmod 1777 /tmp && \
+    apk del wget
 
 # Sevenzipbindings and entrypoint
 COPY common/* /opt/JDownloader/

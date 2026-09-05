@@ -5,5 +5,5 @@ user:
     gid: 101
     groups:
     - jdownloader
-    home: []
+    home: /home/jdownloader
     shell: /bin/false
